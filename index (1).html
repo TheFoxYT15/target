@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quotex Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <h1>Quotex Dashboard</h1>
+    <div class="info">
+      <p>رأس المال الحالي: <span id="capital">100.00</span>$</p>
+      <p>الربح اليومي: <span id="profit">0.00</span>$</p>
+    </div>
+    <form id="tradeForm">
+      <input type="number" id="amount" placeholder="أدخل قيمة الربح أو الخسارة $" required />
+      <select id="type">
+        <option value="win">ربح</option>
+        <option value="loss">خسارة</option>
+      </select>
+      <button type="submit">إضافة</button>
+    </form>
+    <ul id="entries"></ul>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
