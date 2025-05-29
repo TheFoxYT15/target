@@ -4,15 +4,292 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quotex - لوحة تداول مضيئة</title>
+    <style>
+        :root {
+            --main-bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e6e6e6;
+            --profit-color: #00ff9d;
+            --loss-color: #ff4d4d;
+            --btn-bg: #4e54c8;
+            --neon-glow: 0 0 10px;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--main-bg) url('https://g.top4top.io/p_3435uwr3a0.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-blend-mode: overlay;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .dashboard {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(22, 33, 62, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(78, 84, 200, 0.3), rgba(0, 0, 0, 0.2));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 157, 0.1), 
+                rgba(78, 84, 200, 0.3), 
+                rgba(255, 77, 77, 0.1));
+            z-index: -1;
+            border-radius: 20px;
+            animation: glow 3s infinite alternate;
+        }
+        
+        @keyframes glow {
+            0% { opacity: 0.5; }
+            100% { opacity: 0.8; }
+        }
+        
+        .goal-tracker {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+        
+        .progress-green {
+            background: linear-gradient(90deg, 
+                var(--profit-color), 
+                #00e676);
+            box-shadow: var(--neon-glow) rgba(0, 255, 157, 0.7);
+        }
+        
+        .progress-red {
+            background: linear-gradient(90deg, 
+                var(--loss-color), 
+                #ff3547);
+            box-shadow: var(--neon-glow) rgba(255, 77, 77, 0.7);
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .card {
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .profit {
+            color: var(--profit-color);
+            text-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+            font-weight: bold;
+        }
+        
+        .loss {
+            color: var(--loss-color);
+            text-shadow: 0 0 8px rgba(255, 77, 77, 0.5);
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: rgba(30, 30, 60, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        th {
+            background: rgba(78, 84, 200, 0.3);
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .btn {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 8px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 4px 15px rgba(78, 84, 200, 0.4);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 157, 0.3), 
+                rgba(78, 84, 200, 0.6), 
+                rgba(255, 77, 77, 0.3));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-profit {
+            background: linear-gradient(135deg, 
+                var(--profit-color), 
+                #00b894);
+            box-shadow: 0 4px 20px rgba(0, 255, 157, 0.4);
+        }
+        
+        .btn-profit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 255, 157, 0.6);
+        }
+        
+        .btn-loss {
+            background: linear-gradient(135deg, 
+                var(--loss-color), 
+                #ff3547);
+            box-shadow: 0 4px 20px rgba(255, 77, 77, 0.4);
+        }
+        
+        .btn-loss:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(255, 77, 77, 0.6);
+        }
+        
+        .btn-reset {
+            background: linear-gradient(135deg, 
+                #6c757d, 
+                #495057);
+            box-shadow: 0 4px 20px rgba(108, 117, 125, 0.4);
+        }
+        
+        .btn-reset:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(108, 117, 125, 0.6);
+        }
+        
+        #progressText {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .positive {
+            background: rgba(0, 255, 157, 0.05);
+        }
+        
+        .negative {
+            background: rgba(255, 77, 77, 0.05);
+        }
+
+        /* أنماط جديدة لأيقونات التعديل */
+        .editable {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-icon {
+            margin-right: 8px;
+            font-size: 0.8em;
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+
+        .editable:hover .edit-icon {
+            opacity: 1;
+            transform: scale(1.2);
+            color: var(--profit-color);
+        }
+
+        .goal-editable:hover .edit-icon {
+            color: #4e54c8;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="dashboard">
         <div class="header">
-            <h1>📊 لوحة التداول المضيئة</h1>
-            <h3>
+            <h1 style="margin: 0; font-size: 2.2em;">📊 لوحة التداول المضيئة</h1>
+            <h3 style="margin: 10px 0 0; opacity: 0.9;">
                 <span class="editable goal-editable" onclick="editWeeklyGoal()">
                     <i class="fas fa-pen edit-icon"></i>
                     الهدف الأسبوعي: <span id="weeklyGoalText">25$ - 50$</span> ربح
@@ -21,9 +298,9 @@
         </div>
         
         <div class="goal-tracker">
-            <h3>🎯 تقدمك نحو الهدف:</h3>
+            <h3 style="margin-top: 0;">🎯 تقدمك نحو الهدف:</h3>
             <div class="progress-container">
-                <div class="progress-bar progress-green" id="goalProgress"></div>
+                <div class="progress-bar progress-green" id="goalProgress" style="width: 0%"></div>
             </div>
             <div class="progress-labels">
                 <span>0% (0$)</span>
@@ -34,7 +311,7 @@
         </div>
         
         <div class="card">
-            <h3>
+            <h3 style="margin-top: 0;">
                 <span class="editable" onclick="editBalance()">
                     <i class="fas fa-pen edit-icon"></i>
                     💰 رصيد الحساب: <span id="currentBalance">100.00</span> $
@@ -44,14 +321,14 @@
             <p>❌ إجمالي الخسارة: <span class="loss" id="totalLoss">0.00</span> $</p>
         </div>
         
-        <div class="buttons-container">
+        <div style="text-align: center; margin: 25px 0;">
             <button class="btn btn-profit" onclick="addTransaction(true)">🎯 إضافة ربح (+)</button>
             <button class="btn btn-loss" onclick="addTransaction(false)">⚡ إضافة خسارة (-)</button>
             <button class="btn btn-reset" onclick="resetData()">🔄 إعادة تعيين</button>
         </div>
         
-        <div class="transactions">
-            <h3>📝 سجل الصفقات</h3>
+        <div>
+            <h3 style="margin-bottom: 15px;">📝 سجل الصفقات</h3>
             <table>
                 <thead>
                     <tr>
@@ -68,6 +345,165 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // البيانات الأساسية
+        let capital = 100.00;
+        let transactions = [];
+        let weeklyProfit = 0;
+        let weeklyGoalMin = 25;
+        let weeklyGoalMax = 50;
+        
+        // تحديث مؤشر التقدم
+        function updateProgress() {
+            const progressElement = document.getElementById('goalProgress');
+            const progressText = document.getElementById('progressText');
+            const currentProgress = document.getElementById('currentProgress');
+            
+            let percentage = (weeklyProfit / weeklyGoalMin) * 100;
+            
+            if (weeklyProfit > weeklyGoalMax) {
+                percentage = 100 + ((weeklyProfit - weeklyGoalMax) / weeklyGoalMax) * 100;
+            }
+            
+            if (weeklyProfit >= 0) {
+                progressElement.className = 'progress-bar progress-green';
+            } else {
+                progressElement.className = 'progress-bar progress-red';
+            }
+            
+            const progressWidth = Math.max(0, Math.min(percentage, 200));
+            progressElement.style.width = `${progressWidth}%`;
+            
+            if (weeklyProfit >= weeklyGoalMax) {
+                progressText.innerHTML = `🎉 مذهل! تجاوزت الهدف الأقصى (+${weeklyProfit.toFixed(2)}$)`;
+                progressText.style.color = 'var(--profit-color)';
+                progressText.style.textShadow = '0 0 10px rgba(0, 255, 157, 0.7)';
+            } else if (weeklyProfit >= weeklyGoalMin) {
+                progressText.innerHTML = `🔥 ممتاز! حققت الهدف (+${weeklyProfit.toFixed(2)}$)`;
+                progressText.style.color = 'var(--profit-color)';
+                progressText.style.textShadow = '0 0 8px rgba(0, 255, 157, 0.5)';
+            } else if (weeklyProfit > 0) {
+                progressText.innerHTML = `🚀 متبقى ${(weeklyGoalMin - weeklyProfit).toFixed(2)}$ للهدف`;
+                progressText.style.color = '#4e54c8';
+                progressText.style.textShadow = '0 0 8px rgba(78, 84, 200, 0.5)';
+            } else if (weeklyProfit === 0) {
+                progressText.innerHTML = `🔍 ابدأ التداول لتحقيق الأرباح!`;
+                progressText.style.color = 'rgba(255, 255, 255, 0.7)';
+                progressText.style.textShadow = 'none';
+            } else {
+                progressText.innerHTML = `⚠ تحتاج إلى ربح ${(-weeklyProfit).toFixed(2)}$ للعودة إلى الصفر`;
+                progressText.style.color = 'var(--loss-color)';
+                progressText.style.textShadow = '0 0 8px rgba(255, 77, 77, 0.5)';
+            }
+            
+            currentProgress.textContent = `${Math.round(percentage)}% (${weeklyProfit.toFixed(2)}$)`;
+        }
+        
+        // تحديث لوحة المعلومات
+        function updateDashboard() {
+            document.getElementById('currentBalance').textContent = capital.toFixed(2);
+            
+            const totalProfit = transactions
+                .filter(t => t.profit)
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalLoss = transactions
+                .filter(t => !t.profit)
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            weeklyProfit = totalProfit - totalLoss;
+            
+            document.getElementById('totalProfit').textContent = totalProfit.toFixed(2);
+            document.getElementById('totalLoss').textContent = totalLoss.toFixed(2);
+            
+            // تحديث جدول المعاملات
+            const tbody = document.getElementById('transactions');
+            tbody.innerHTML = '';
+            
+            let runningProfit = 0;
+            
+            transactions.forEach((t, index) => {
+                const row = document.createElement('tr');
+                row.className = t.profit ? 'positive' : 'negative';
+                
+                runningProfit += t.profit ? t.amount : -t.amount;
+                const progress = (runningProfit / weeklyGoalMin) * 100;
+                
+                row.innerHTML = `
+                    <td>${new Date().toLocaleString()}</td>
+                    <td class="${t.profit ? 'profit' : 'loss'}">${t.profit ? '🟢 ربح' : '🔴 خسارة'}</td>
+                    <td>${t.amount.toFixed(2)} $</td>
+                    <td>${progress.toFixed(1)}%</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            updateProgress();
+        }
+        
+        // إضافة معاملة جديدة
+        function addTransaction(isProfit) {
+            const amountInput = prompt(`أدخل مبلغ ${isProfit ? 'الربح' : 'الخسارة'}:`);
+            const amount = parseFloat(amountInput);
+            
+            if (isNaN(amount)) {
+                alert('الرجاء إدخال رقم صحيح!');
+                return;
+            }
+            
+            if (!isProfit && amount > capital) {
+                alert('لا يمكن أن تكون الخسارة أكبر من رأس المال المتاح!');
+                return;
+            }
+            
+            transactions.push({
+                date: new Date(),
+                profit: isProfit,
+                amount: amount
+            });
+            
+            capital += isProfit ? amount : -amount;
+            updateDashboard();
+        }
+        
+        // إعادة تعيين البيانات
+        function resetData() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟ سيتم مسح كل الصفقات!')) {
+                capital = 100.00;
+                transactions = [];
+                weeklyProfit = 0;
+                updateDashboard();
+            }
+        }
+
+        // تعديل الرصيد
+        function editBalance() {
+            const newBalance = prompt("أدخل الرصيد الجديد:", capital.toFixed(2));
+            if (newBalance && !isNaN(newBalance)) {
+                capital = parseFloat(newBalance);
+                updateDashboard();
+            }
+        }
+
+        // تعديل الهدف الأسبوعي
+        function editWeeklyGoal() {
+            const newGoal = prompt("أدخل الهدف الأسبوعي (مثال: 100-200):", `${weeklyGoalMin}-${weeklyGoalMax}`);
+            if (newGoal) {
+                const parts = newGoal.split('-');
+                if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+                    weeklyGoalMin = parseFloat(parts[0]);
+                    weeklyGoalMax = parseFloat(parts[1]);
+                    document.getElementById('weeklyGoalText').textContent = `${weeklyGoalMin}$ - ${weeklyGoalMax}$`;
+                    updateDashboard();
+                } else {
+                    alert("الرجاء إدخال الهدف بالصيغة الصحيحة (مثال: 100-200)");
+                }
+            }
+        }
+        
+        // التهيئة الأولية
+        updateDashboard();
+    </script>
 </body>
-                                       </html>
+    </html>
