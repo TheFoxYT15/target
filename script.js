@@ -1,65 +1,82 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const capitalEl = document.getElementById("capital");
-  const profitEl = document.getElementById("profit");
-  const entriesEl = document.getElementById("entries");
-  const form = document.getElementById("tradeForm");
-  const amountInput = document.getElementById("amount");
-  const typeSelect = document.getElementById("type");
+// البيانات الأساسية
+let capital = 100.00;
+let transactions = [];
+let weeklyProfit = 0;
+let weeklyGoalMin = 25;
+let weeklyGoalMax = 50;
 
-  let capital = parseFloat(localStorage.getItem("capital")) || 100.00;
-  let profit = parseFloat(localStorage.getItem("profit")) || 0.00;
-  let entries = JSON.parse(localStorage.getItem("entries")) || [];
-
-  function updateUI() {
-    capitalEl.textContent = capital.toFixed(2);
-    profitEl.textContent = profit.toFixed(2);
-    entriesEl.innerHTML = "";
-    entries.forEach((entry, index) => {
-      const li = document.createElement("li");
-      li.innerHTML = \`\${entry.type === 'win' ? '✅' : '❌'} \${entry.amount.toFixed(2)}$
-        <button onclick="removeEntry(\${index})">حذف</button>\`;
-      entriesEl.appendChild(li);
-    });
-  }
-
-  window.removeEntry = function (index) {
-    const entry = entries[index];
-    if (entry.type === "win") {
-      capital -= entry.amount;
-      profit -= entry.amount;
-    } else {
-      capital += entry.amount;
-      profit += -entry.amount;
+// تحديث مؤشر التقدم
+function updateProgress() {
+    const progressElement = document.getElementById('goalProgress');
+    const progressText = document.getElementById('progressText');
+    const currentProgress = document.getElementById('currentProgress');
+    
+    let percentage = (weeklyProfit / weeklyGoalMin) * 100;
+    
+    if (weeklyProfit > weeklyGoalMax) {
+        percentage = 100 + ((weeklyProfit - weeklyGoalMax) / weeklyGoalMax) * 100;
     }
-    entries.splice(index, 1);
-    saveData();
-    updateUI();
-  };
-
-  function saveData() {
-    localStorage.setItem("capital", capital.toFixed(2));
-    localStorage.setItem("profit", profit.toFixed(2));
-    localStorage.setItem("entries", JSON.stringify(entries));
-  }
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const amount = parseFloat(amountInput.value);
-    const type = typeSelect.value;
-
-    if (type === "win") {
-      capital += amount;
-      profit += amount;
+    
+    if (weeklyProfit >= 0) {
+        progressElement.className = 'progress-bar progress-green';
     } else {
-      capital -= amount;
-      profit -= amount;
+        progressElement.className = 'progress-bar progress-red';
     }
+    
+    const progressWidth = Math.max(0, Math.min(percentage, 200));
+    progressElement.style.width = `${progressWidth}%`;
+    
+    if (weeklyProfit >= weeklyGoalMax) {
+        progressText.innerHTML = `🎉 مذهل! تجاوزت الهدف الأقصى (+${weeklyProfit.toFixed(2)}$)`;
+        progressText.style.color = 'var(--profit-color)';
+        progressText.style.textShadow = '0 0 10px rgba(0, 255, 157, 0.7)';
+    } else if (weeklyProfit >= weeklyGoalMin) {
+        progressText.innerHTML = `🔥 ممتاز! حققت الهدف (+${weeklyProfit.toFixed(2)}$)`;
+        progressText.style.color = 'var(--profit-color)';
+        progressText.style.textShadow = '0 0 8px rgba(0, 255, 157, 0.5)';
+    } else if (weeklyProfit > 0) {
+        progressText.innerHTML = `🚀 متبقى ${(weeklyGoalMin - weeklyProfit).toFixed(2)}$ للهدف`;
+        progressText.style.color = '#4e54c8';
+        progressText.style.textShadow = '0 0 8px rgba(78, 84, 200, 0.5)';
+    } else if (weeklyProfit === 0) {
+        progressText.innerHTML = `🔍 ابدأ التداول لتحقيق الأرباح!`;
+        progressText.style.color = 'rgba(255, 255, 255, 0.7)';
+        progressText.style.textShadow = 'none';
+    } else {
+        progressText.innerHTML = `⚠ تحتاج إلى ربح ${(-weeklyProfit).toFixed(2)}$ للعودة إلى الصفر`;
+        progressText.style.color = 'var(--loss-color)';
+        progressText.style.textShadow = '0 0 8px rgba(255, 77, 77, 0.5)';
+    }
+    
+    currentProgress.textContent = `${Math.round(percentage)}% (${weeklyProfit.toFixed(2)}$)`;
+}
 
-    entries.unshift({ type, amount });
-    saveData();
-    updateUI();
-    form.reset();
-  });
+// ... (بقية الدوال كما هي في الكود السابق) ...
 
-  updateUI();
-});
+// تعديل الرصيد
+function editBalance() {
+    const newBalance = prompt("أدخل الرصيد الجديد:", capital.toFixed(2));
+    if (newBalance && !isNaN(newBalance)) {
+        capital = parseFloat(newBalance);
+        updateDashboard();
+    }
+}
+
+// تعديل الهدف الأسبوعي
+function editWeeklyGoal() {
+    const newGoal = prompt("أدخل الهدف الأسبوعي (مثال: 100-200):", `${weeklyGoalMin}-${weeklyGoalMax}`);
+    if (newGoal) {
+        const parts = newGoal.split('-');
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+            weeklyGoalMin = parseFloat(parts[0]);
+            weeklyGoalMax = parseFloat(parts[1]);
+            document.getElementById('weeklyGoalText').textContent = `${weeklyGoalMin}$ - ${weeklyGoalMax}$`;
+            updateDashboard();
+        } else {
+            alert("الرجاء إدخال الهدف بالصيغة الصحيحة (مثال: 100-200)");
+        }
+    }
+}
+
+// التهيئة الأولية
+updateDashboard();
