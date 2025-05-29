@@ -1,80 +1,89 @@
+:root {
+    --main-bg: #1a1a2e;
+    --card-bg: #16213e;
+    --text-color: #e6e6e6;
+    --profit-color: #00ff9d;
+    --loss-color: #ff4d4d;
+    --btn-bg: #4e54c8;
+    --neon-glow: 0 0 10px;
+}
+
 body {
-  font-family: 'Arial', sans-serif;
-  background: #1e1e2f;
-  color: white;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+    font-family: 'Tajawal', sans-serif;
+    background: var(--main-bg) url('https://g.top4top.io/p_3435uwr3a0.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-blend-mode: overlay;
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
 }
 
 .dashboard {
-  background: #292943;
-  padding: 30px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(22, 33, 62, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #00ffcc;
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, rgba(78, 84, 200, 0.3), rgba(0, 0, 0, 0.2));
+    position: relative;
+    overflow: hidden;
 }
 
-.info p {
-  margin: 10px 0;
-  font-size: 18px;
+.header::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, 
+        rgba(0, 255, 157, 0.1), 
+        rgba(78, 84, 200, 0.3), 
+        rgba(255, 77, 77, 0.1));
+    z-index: -1;
+    border-radius: 20px;
+    animation: glow 3s infinite alternate;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
+@keyframes glow {
+    0% { opacity: 0.5; }
+    100% { opacity: 0.8; }
 }
 
-input, select, button {
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
+/* ... (بقية أنماط CSS كما هي في الكود السابق) ... */
+
+.editable {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-input {
-  background: #3b3b5c;
-  color: white;
+.edit-icon {
+    margin-right: 8px;
+    font-size: 0.8em;
+    opacity: 0.6;
+    transition: all 0.3s;
 }
 
-select {
-  background: #3b3b5c;
-  color: white;
+.editable:hover .edit-icon {
+    opacity: 1;
+    transform: scale(1.2);
+    color: var(--profit-color);
 }
 
-button {
-  background: #00ffcc;
-  color: black;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-button:hover {
-  background: #00ccaa;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
-}
-
-li {
-  background: #3b3b5c;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-}
+.goal-editable:hover .edit-icon {
+    color: #4e54c8;
+  }
